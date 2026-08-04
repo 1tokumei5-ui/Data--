@@ -318,16 +318,35 @@ function openBookingModal(id = null) {
     const q = b ? db.from("bookings").update(payload).eq("booking_id", id) : db.from("bookings").insert(payload);
     const { error } = await q;
     if (error) return toast("บันทึกไม่สำเร็จ: " + error.message, "error");
+
+    // ถ้าเปลี่ยนสถานะเป็นยกเลิก/เช็คเอาท์แล้ว ให้ปรับห้องที่เกี่ยวข้องกลับเป็นว่าง
+    if (b && ["cancelled", "checked_out"].includes(payload.booking_status)) {
+      const { data: details } = await db.from("booking_details").select("room_id").eq("booking_id", id);
+      const roomIds = [...new Set((details || []).map(d => d.room_id).filter(Boolean))];
+      if (roomIds.length) await db.from("rooms").update({ room_status: "available" }).in("room_id", roomIds);
+    }
+
     toast(b ? "แก้ไขการจองแล้ว" : "เพิ่มการจองแล้ว", "success");
-    closeModal(); loadBookings();
+    closeModal(); loadBookings(); loadRooms();
   });
 }
 async function deleteBooking(id) {
-  if (!confirm("ลบการจองนี้? รายละเอียดห้องที่ผูกกับการจองนี้จะถูกลบด้วย")) return;
+  if (!confirm("ลบการจองนี้? รายละเอียดห้องที่ผูกกับการจองนี้จะถูกลบด้วย และห้องที่เกี่ยวข้องจะถูกปรับกลับเป็นว่าง")) return;
+
+  // หา room_id ที่ผูกกับการจองนี้ไว้ก่อน เพื่อเอาไปปรับสถานะห้องคืนทีหลัง
+  const { data: details } = await db.from("booking_details").select("room_id").eq("booking_id", id);
+  const roomIds = [...new Set((details || []).map(d => d.room_id).filter(Boolean))];
+
   const { error } = await db.from("bookings").delete().eq("booking_id", id);
   if (error) return toast("ลบไม่สำเร็จ: " + error.message, "error");
-  toast("ลบการจองแล้ว", "success");
+
+  if (roomIds.length) {
+    await db.from("rooms").update({ room_status: "available" }).in("room_id", roomIds);
+  }
+
+  toast("ลบการจองแล้ว และปรับห้องที่เกี่ยวข้องเป็นว่างแล้ว", "success");
   loadBookings();
+  loadRooms();
 }
 
 /* ---------------- dashboard ---------------- */
