@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Staff Console · AURELINE HOTEL</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div id="toast-stack"></div>
+
+  <div class="admin-shell">
+
+    <!-- ============ SIDEBAR ============ -->
+    <aside class="admin-sidebar">
+      <div class="brand"><span class="dot">◆</span>AURELINE<small style="display:block">Staff Console</small></div>
+
+      <ul class="admin-nav" id="admin-nav">
+        <li><button data-view="dashboard" class="active">ภาพรวม</button></li>
+        <li><button data-view="room_types">ประเภทห้อง</button></li>
+        <li><button data-view="rooms">ห้องพัก</button></li>
+        <li><button data-view="bookings">การจอง</button></li>
+        <li><button data-view="customers">ลูกค้า</button></li>
+      </ul>
+
+      <div style="margin-top:auto;">
+        <a href="index.html" class="btn btn-ghost btn-block btn-sm">↩ กลับหน้าเว็บลูกค้า</a>
+      </div>
+    </aside>
+
+    <!-- ============ MAIN ============ -->
+    <main class="admin-main">
+
+      <!-- DASHBOARD -->
+      <section class="admin-view active" id="view-dashboard">
+        <div class="admin-topbar">
+          <div>
+            <span class="eyebrow">ภาพรวมระบบ</span>
+            <h2>สวัสดีทีมงานหน้าเคาน์เตอร์</h2>
+          </div>
+        </div>
+        <div class="stat-grid">
+          <div class="panel stat-card"><div class="eyebrow">ห้องว่าง</div><div class="num" id="stat-available">–</div></div>
+          <div class="panel stat-card"><div class="eyebrow">ห้องไม่ว่าง</div><div class="num" id="stat-occupied">–</div></div>
+          <div class="panel stat-card"><div class="eyebrow">การจองทั้งหมด</div><div class="num" id="stat-bookings">–</div></div>
+          <div class="panel stat-card"><div class="eyebrow">ลูกค้าในระบบ</div><div class="num" id="stat-customers">–</div></div>
+        </div>
+        <div class="panel panel-pad">
+          <h3 style="margin-bottom:6px;">เริ่มต้นใช้งาน</h3>
+          <p class="muted" style="line-height:1.7;">
+            ใช้เมนูด้านซ้ายเพื่อจัดการ <strong>ประเภทห้อง</strong>, <strong>ห้องพัก</strong>, <strong>การจอง</strong> และ <strong>ลูกค้า</strong> —
+            ทุกตารางเชื่อมต่อกับ Supabase โดยตรง เพิ่ม/แก้ไข/ลบ ข้อมูลจะสะท้อนผลทันทีที่หน้าเว็บลูกค้า (index.html)
+          </p>
+        </div>
+      </section>
+
+      <!-- ROOM TYPES -->
+      <section class="admin-view" id="view-room_types">
+        <div class="admin-topbar">
+          <div><span class="eyebrow">จัดการข้อมูล</span><h2>ประเภทห้องพัก</h2></div>
+          <button class="btn btn-primary btn-sm" onclick="openRoomTypeModal()">+ เพิ่มประเภทห้อง</button>
+        </div>
+        <div class="table-wrap panel">
+          <table class="data">
+            <thead><tr>
+              <th class="mono">ID</th><th>ชื่อประเภท</th><th>รายละเอียด</th><th>ผู้เข้าพักสูงสุด</th><th>สิ่งอำนวยความสะดวก</th><th></th>
+            </tr></thead>
+            <tbody id="tbl-room-types"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ROOMS -->
+      <section class="admin-view" id="view-rooms">
+        <div class="admin-topbar">
+          <div><span class="eyebrow">จัดการข้อมูล</span><h2>ห้องพัก</h2></div>
+          <button class="btn btn-primary btn-sm" onclick="openRoomModal()">+ เพิ่มห้องพัก</button>
+        </div>
+        <div class="table-wrap panel">
+          <table class="data">
+            <thead><tr>
+              <th class="mono">ID</th><th>เลขห้อง</th><th>ประเภท</th><th>ชั้น</th><th>ราคา/คืน</th><th>สถานะ</th><th></th>
+            </tr></thead>
+            <tbody id="tbl-rooms"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- BOOKINGS -->
+      <section class="admin-view" id="view-bookings">
+        <div class="admin-topbar">
+          <div><span class="eyebrow">จัดการข้อมูล</span><h2>การจอง</h2></div>
+          <button class="btn btn-primary btn-sm" onclick="openBookingModal()">+ เพิ่มการจอง</button>
+        </div>
+        <div class="table-wrap panel">
+          <table class="data">
+            <thead><tr>
+              <th class="mono">ID</th><th>ลูกค้า</th><th>เช็คอิน</th><th>เช็คเอาท์</th><th>ผู้เข้าพัก</th><th>สถานะ</th><th></th>
+            </tr></thead>
+            <tbody id="tbl-bookings"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- CUSTOMERS -->
+      <section class="admin-view" id="view-customers">
+        <div class="admin-topbar">
+          <div><span class="eyebrow">จัดการข้อมูล</span><h2>ลูกค้า</h2></div>
+          <button class="btn btn-primary btn-sm" onclick="openCustomerModal()">+ เพิ่มลูกค้า</button>
+        </div>
+        <div class="table-wrap panel">
+          <table class="data">
+            <thead><tr>
+              <th class="mono">ID</th><th>ชื่อ-สกุล</th><th>เบอร์โทร</th><th>อีเมล</th><th>วันที่ลงทะเบียน</th><th></th>
+            </tr></thead>
+            <tbody id="tbl-customers"></tbody>
+          </table>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ============ MODAL (shared) ============ -->
+  <div class="modal-backdrop" id="modal-backdrop">
+    <div class="modal">
+      <div class="modal-head">
+        <h3 id="modal-title">แบบฟอร์ม</h3>
+        <button class="modal-close" onclick="closeModal()">✕</button>
+      </div>
+      <div class="modal-body" id="modal-body"></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabaseClient.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>

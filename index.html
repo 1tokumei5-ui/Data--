@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AURELINE HOTEL — พักผ่อนอย่างเหนือระดับ</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <nav class="site-nav">
+    <div class="wrap">
+      <a href="index.html" style="text-decoration:none;" class="brand"><span class="dot">◆</span>AURELINE<small style="margin-left:6px;">HOTEL &amp; RESIDENCES</small></a>
+      <ul class="nav-links">
+        <li><a href="index.html" class="active">ห้องพัก</a></li>
+        <li><a href="booking.html">จองห้องพัก</a></li>
+        <li><a href="admin.html">Staff Login</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="wrap hero-inner">
+      <span class="eyebrow">AURELINE HOTEL &amp; RESIDENCES · ริมชายฝั่งอันดามัน</span>
+      <h1>พักผ่อนอย่าง<br><em>เหนือระดับ</em> ในทุกรายละเอียด</h1>
+      <p class="lede">ห้องพักทุกห้องได้รับการดูแลเป็นพิเศษ ตั้งแต่แสงยามเช้าไปจนถึงกลิ่นผ้าปูที่นอน
+        เลือกห้องที่ใช่ แล้วปล่อยให้เราดูแลส่วนที่เหลือ</p>
+      <div class="hero-actions">
+        <a href="#rooms" class="btn btn-primary">ดูห้องว่างทั้งหมด</a>
+        <a href="booking.html" class="btn btn-ghost">จองห้องพักเลย</a>
+      </div>
+      <div class="hero-stats">
+        <div><strong id="hs-available">–</strong><span>ห้องว่างวันนี้</span></div>
+        <div><strong id="hs-types">–</strong><span>ประเภทห้องพัก</span></div>
+        <div><strong>4.9</strong><span>คะแนนรีวิวเฉลี่ย</span></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="section" id="rooms">
+    <div class="wrap">
+      <div class="filter-bar">
+        <div>
+          <span class="eyebrow">ห้องพักที่พร้อมให้บริการ</span>
+          <h2 style="margin-top:6px;">เลือกห้องที่ใช่สำหรับคุณ</h2>
+        </div>
+        <select id="filter-type" onchange="renderRooms()">
+          <option value="">ทุกประเภทห้อง</option>
+        </select>
+      </div>
+      <div class="rooms-grid" id="rooms-grid">
+        <p class="muted">กำลังโหลดห้องพัก…</p>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <p>© 2026 Aureline Hotel &amp; Residences — โปรเจกต์วิชาฐานข้อมูล</p>
+      <p><a href="admin.html" style="color:var(--text-muted);">Staff Console →</a></p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabaseClient.js"></script>
+  <script src="index.js"></script>
+</body>
+</html>
