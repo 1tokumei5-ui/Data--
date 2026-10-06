@@ -246,3 +246,36 @@ select:focus, input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px r
 .join-col .details-list li { border-bottom: none; justify-content: flex-start; gap: 12px;}
 .join-col .details-list .muted { width: 100px; }
 .admin-sidebar a:hover { background-color: rgba(255,255,255,0.3) !important; color: white !important; font-weight: bold; }
+/* ================== แก้ไขแถบเลื่อนแนวนอนใน Modal ================== */
+.modal, .modal-body {
+  overflow-x: hidden !important; /* ซ่อนแถบเลื่อนแนวนอน */
+  box-sizing: border-box;
+}
+
+.modal-body form, 
+.modal-body .form-row, 
+.modal-body .field {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* บังคับให้ช่องกรอกข้อมูลไม่ล้นขอบ */
+.modal-body input, 
+.modal-body select {
+  box-sizing: border-box !important;
+  max-width: 100%;
+}
+
+/* ถ้าใช้ flex ให้ยอมปัดบรรทัดลงมาได้ถ้ายาวเกินไป */
+.form-row {
+  display: flex;
+  flex-wrap: wrap; 
+  gap: 16px;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+.form-row .field {
+  flex: 1;
+  min-width: 200px; /* ป้องกันกล่องบีบจนพัง */
+}
