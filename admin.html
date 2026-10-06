@@ -12,6 +12,8 @@
 <body>
   <div id="toast-stack"></div>
   <div class="admin-shell">
+    
+    <!-- ============ SIDEBAR ============ -->
     <aside class="admin-sidebar">
       <div class="brand"><span class="dot">◆</span>AURA GRAND<small style="display:block">Staff Console</small></div>
       <ul class="admin-nav" id="admin-nav">
@@ -21,16 +23,19 @@
         <li><button data-view="bookings">การจอง</button></li>
         <li><button data-view="customers">ลูกค้า</button></li>
       </ul>
-      <div style="margin-top:auto;">
-        <a href="index.html" class="btn btn-ghost btn-block btn-sm">↩ กลับหน้าเว็บลูกค้า</a>
+      <div style="margin-top:auto; padding-top: 20px;">
+        <a href="index.html" style="display: block; width: 100%; text-align: center; padding: 12px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.4); color: white; border-radius: 6px; text-decoration: none; cursor: pointer; transition: 0.3s;">
+          ↩ กลับหน้าเว็บลูกค้า
+        </a>
       </div>
     </aside>
 
+    <!-- ============ MAIN CONTENT ============ -->
     <main class="admin-main">
+      
+      <!-- DASHBOARD -->
       <section class="admin-view active" id="view-dashboard">
-        <div class="admin-topbar">
-          <div><span class="eyebrow">ภาพรวมระบบ</span><h2>สวัสดีทีมงานหน้าเคาน์เตอร์</h2></div>
-        </div>
+        <div class="admin-topbar"><div><span class="eyebrow">ภาพรวมระบบ</span><h2>สวัสดีทีมงานหน้าเคาน์เตอร์</h2></div></div>
         <div class="stat-grid">
           <div class="panel stat-card"><div class="eyebrow">ห้องว่าง</div><div class="num" id="stat-available">–</div></div>
           <div class="panel stat-card"><div class="eyebrow">ห้องไม่ว่าง</div><div class="num" id="stat-occupied">–</div></div>
@@ -39,72 +44,96 @@
         </div>
       </section>
 
+      <!-- ROOM TYPES -->
       <section class="admin-view" id="view-room_types">
-        <div class="admin-topbar">
-          <div><span class="eyebrow">จัดการข้อมูล</span><h2>ประเภทห้องพัก</h2></div>
-          <button class="btn btn-primary btn-sm" onclick="if(typeof openRoomTypeModal === 'function') openRoomTypeModal()">+ เพิ่มประเภทห้อง</button>
-        </div>
-        <div class="table-wrap panel">
-          <table class="data">
-            <thead><tr><th class="mono">ID</th><th>ชื่อประเภท</th><th>รายละเอียด</th><th>ผู้เข้าพักสูงสุด</th><th>สิ่งอำนวยความสะดวก</th><th></th></tr></thead>
-            <tbody id="tbl-room-types"></tbody>
-          </table>
-        </div>
+        <div class="admin-topbar"><div><span class="eyebrow">จัดการข้อมูล</span><h2>ประเภทห้องพัก</h2></div><button class="btn btn-primary btn-sm" onclick="openRoomTypeModal()">+ เพิ่มประเภทห้อง</button></div>
+        <div class="table-wrap panel"><table class="data"><thead><tr><th class="mono">ID</th><th>ชื่อประเภท</th><th>รายละเอียด</th><th>ผู้เข้าพักสูงสุด</th><th>สิ่งอำนวยความสะดวก</th><th></th></tr></thead><tbody id="tbl-room-types"></tbody></table></div>
       </section>
 
+      <!-- ROOMS -->
       <section class="admin-view" id="view-rooms">
-        <div class="admin-topbar">
-          <div><span class="eyebrow">จัดการข้อมูล</span><h2>ห้องพัก</h2></div>
-          <button class="btn btn-primary btn-sm" onclick="if(typeof openRoomModal === 'function') openRoomModal()">+ เพิ่มห้องพัก</button>
-        </div>
-        <div class="table-wrap panel">
-          <table class="data">
-            <thead><tr><th class="mono">ID</th><th>เลขห้อง</th><th>ประเภท</th><th>ชั้น</th><th>ราคา/คืน</th><th>สถานะ</th><th></th></tr></thead>
-            <tbody id="tbl-rooms"></tbody>
-          </table>
-        </div>
+        <div class="admin-topbar"><div><span class="eyebrow">จัดการข้อมูล</span><h2>ห้องพัก</h2></div><button class="btn btn-primary btn-sm" onclick="openRoomModal()">+ เพิ่มห้องพัก</button></div>
+        <div class="table-wrap panel"><table class="data"><thead><tr><th class="mono">ID</th><th>เลขห้อง</th><th>ประเภท</th><th>ชั้น</th><th>ราคา/คืน</th><th>สถานะ</th><th></th></tr></thead><tbody id="tbl-rooms"></tbody></table></div>
       </section>
 
+      <!-- BOOKINGS -->
       <section class="admin-view" id="view-bookings">
+        <div class="admin-topbar"><div><span class="eyebrow">จัดการข้อมูล</span><h2>การจอง</h2></div><button class="btn btn-primary btn-sm" onclick="openBookingModal()">+ เพิ่มการจอง</button></div>
+        <div class="table-wrap panel"><table class="data"><thead><tr><th class="mono">ID</th><th>ลูกค้า</th><th>ห้องพัก</th><th>เช็คอิน</th><th>เช็คเอาท์</th><th>ผู้เข้าพัก</th><th>สถานะ</th><th></th></tr></thead><tbody id="tbl-bookings"></tbody></table></div>
+      </section>
+
+      <!-- CUSTOMERS -->
+      <section class="admin-view" id="view-customers">
+        <div class="admin-topbar"><div><span class="eyebrow">จัดการข้อมูล</span><h2>ลูกค้า</h2></div><button class="btn btn-primary btn-sm" onclick="openCustomerModal()">+ เพิ่มลูกค้า</button></div>
+        <div class="table-wrap panel"><table class="data"><thead><tr><th class="mono">ID</th><th>ชื่อ-สกุล</th><th>เบอร์โทร</th><th>อีเมล</th><th>ห้องที่จอง</th><th>วันที่ลงทะเบียน</th><th></th></tr></thead><tbody id="tbl-customers"></tbody></table></div>
+      </section>
+
+      <!-- BOOKING DETAILS (JOIN) -->
+      <section class="admin-view" id="view-booking-details">
         <div class="admin-topbar">
-          <div><span class="eyebrow">จัดการข้อมูล</span><h2>การจอง</h2></div>
-          <button class="btn btn-primary btn-sm" onclick="if(typeof openBookingModal === 'function') openBookingModal()">+ เพิ่มการจอง</button>
+          <div><button class="btn btn-ghost btn-sm" onclick="showView('bookings')" style="padding: 0; margin-bottom: 8px; border:none; background:transparent;">← กลับไปหน้าการจอง</button><h2>รายละเอียดการจอง</h2></div>
         </div>
-        <div class="table-wrap panel">
-          <table class="data">
-            <!-- 💡 เพิ่มหัวตาราง "ห้องพัก" ตรงนี้ -->
-            <thead><tr><th class="mono">ID</th><th>ลูกค้า</th><th>ห้องพัก</th><th>เช็คอิน</th><th>เช็คเอาท์</th><th>ผู้เข้าพัก</th><th>สถานะ</th><th></th></tr></thead>
-            <tbody id="tbl-bookings"></tbody>
-          </table>
+        <div class="details-grid">
+          <div class="details-card">
+            <ul class="details-list">
+              <li><span class="muted">หมายเลขการจอง</span><strong id="det-id" class="mono"></strong></li>
+              <li><span class="muted">ชื่อผู้จอง</span><strong id="det-name"></strong></li>
+              <li><span class="muted">เบอร์โทร</span><strong id="det-phone"></strong></li>
+              <li><span class="muted">วันที่เข้าพัก</span><strong id="det-checkin"></strong></li>
+              <li><span class="muted">วันที่ออก</span><strong id="det-checkout"></strong></li>
+              <li><span class="muted">สถานะ</span><span id="det-status" class="status-badge"></span></li>
+            </ul>
+          </div>
+          <div class="details-card">
+            <img id="det-img" src="" style="width: 140px; height: 140px; object-fit: cover; border-radius: var(--radius-md);" alt="Room">
+            <ul class="details-list" style="flex: 1;">
+              <li><strong id="det-roomtype" style="color: var(--primary); font-size: 1.15rem;"></strong></li>
+              <li><span class="muted">ห้องหมายเลข</span><strong id="det-roomno" class="mono"></strong></li>
+              <li><span class="muted">ราคา</span><strong><span id="det-price"></span> บาท/คืน</strong></li>
+              <li><span class="muted">จำนวนคืน</span><strong id="det-nights"></strong></li>
+              <li><span class="muted">ราคารวม</span><strong style="color: var(--primary); font-size: 1.25rem;" id="det-total"></strong></li>
+            </ul>
+          </div>
+        </div>
+        <div class="panel" style="background: rgba(255,255,255,0.9); backdrop-filter: blur(10px); padding: 32px;">
+          <h3 style="margin-bottom: 24px; color: var(--primary); font-weight:500;">ข้อมูลจากหลายตาราง (JOIN)</h3>
+          <div class="join-table-grid">
+            <div class="join-col"><span class="eyebrow">ลูกค้า (Customers)</span><ul class="details-list"><li><span class="muted">ชื่อ :</span><strong id="join-c-name"></strong></li><li><span class="muted">เบอร์โทร :</span><strong id="join-c-phone"></strong></li></ul></div>
+            <div class="join-col"><span class="eyebrow">ห้องพัก (Rooms)</span><ul class="details-list"><li><span class="muted">ประเภท :</span><strong id="join-r-type"></strong></li><li><span class="muted">ห้องเลขที่ :</span><strong id="join-r-no"></strong></li><li><span class="muted">ราคา :</span><strong id="join-r-price"></strong></li></ul></div>
+            <div class="join-col"><span class="eyebrow">การจอง (Bookings)</span><ul class="details-list"><li><span class="muted">เช็คอิน :</span><strong id="join-b-in"></strong></li><li><span class="muted">เช็คเอาท์ :</span><strong id="join-b-out"></strong></li><li><span class="muted">สถานะ :</span><strong id="join-b-status" style="color: var(--primary);"></strong></li></ul></div>
+          </div>
         </div>
       </section>
 
-      <section class="admin-view" id="view-customers">
+      <!-- CUSTOMER DETAILS (JOIN) -->
+      <section class="admin-view" id="view-customer-details">
         <div class="admin-topbar">
-          <div><span class="eyebrow">จัดการข้อมูล</span><h2>ลูกค้า</h2></div>
-          <button class="btn btn-primary btn-sm" onclick="if(typeof openCustomerModal === 'function') openCustomerModal()">+ เพิ่มลูกค้า</button>
+          <div><button class="btn btn-ghost btn-sm" onclick="showView('customers')" style="padding: 0; margin-bottom: 8px; border:none; background:transparent;">← กลับไปหน้าลูกค้า</button><h2>ข้อมูลลูกค้าและประวัติการจอง</h2></div>
+          <button class="btn btn-ghost btn-sm" id="btn-edit-customer" style="border-color: rgba(2, 132, 199, 0.3);">แก้ไขข้อมูลลูกค้า</button>
         </div>
-        <div class="table-wrap panel">
-          <table class="data">
-            <!-- 💡 เพิ่มหัวตาราง "ห้องที่จอง" ตรงนี้ -->
-            <thead><tr><th class="mono">ID</th><th>ชื่อ-สกุล</th><th>เบอร์โทร</th><th>อีเมล</th><th>ห้องที่จอง</th><th>วันที่ลงทะเบียน</th><th></th></tr></thead>
-            <tbody id="tbl-customers"></tbody>
-          </table>
+        <div class="details-grid" style="grid-template-columns: 1fr;">
+          <div class="details-card">
+            <div style="width: 90px; height: 90px; background: linear-gradient(135deg, var(--primary), var(--accent)); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; font-weight: 600;" id="det-c-initial">?</div>
+            <ul class="details-list" style="flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 0 40px; padding-left: 16px;">
+              <li><span class="muted">รหัสลูกค้า</span><strong id="det-c-id" class="mono"></strong></li>
+              <li><span class="muted">ชื่อ-สกุล</span><strong id="det-c-name"></strong></li>
+              <li><span class="muted">เบอร์โทรศัพท์</span><strong id="det-c-phone"></strong></li>
+              <li><span class="muted">อีเมล</span><strong id="det-c-email"></strong></li>
+              <li><span class="muted">วันที่ลงทะเบียน</span><strong id="det-c-reg"></strong></li>
+              <li><span class="muted">จำนวนการจองรวม</span><strong id="det-c-total-bookings" style="color: var(--primary);"></strong></li>
+            </ul>
+          </div>
+        </div>
+        <div class="panel table-wrap">
+          <div style="padding: 24px 24px 0;"><h3 style="color: var(--primary); font-weight:500;">ประวัติการจองห้องพัก</h3></div>
+          <table class="data"><thead><tr><th class="mono">รหัสการจอง</th><th>ห้องพัก</th><th>วันที่เข้าพัก</th><th>วันที่ออก</th><th>สถานะ</th><th>ราคารวม</th><th></th></tr></thead><tbody id="tbl-customer-booking-history"></tbody></table>
         </div>
       </section>
+
     </main>
   </div>
-
-  <div class="modal-backdrop" id="modal-backdrop">
-    <div class="modal">
-      <div class="modal-head">
-        <h3 id="modal-title">แบบฟอร์ม</h3>
-        <button class="modal-close" onclick="if(typeof closeModal === 'function') closeModal()">✕</button>
-      </div>
-      <div class="modal-body" id="modal-body"></div>
-    </div>
-  </div>
-
+  
+  <div class="modal-backdrop" id="modal-backdrop"><div class="modal"><div class="modal-head"><h3 id="modal-title"></h3><button class="modal-close" onclick="closeModal()">✕</button></div><div class="modal-body" id="modal-body"></div></div></div>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabaseClient.js"></script>
   <script src="admin.js"></script>
