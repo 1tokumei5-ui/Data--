@@ -4,15 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>จองห้องพัก — AURELINE HOTEL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
-<body>
-
+<body class="booking-page">
   <div id="toast-stack"></div>
-
   <nav class="site-nav">
     <div class="wrap">
-      <a href="index.html" style="text-decoration:none;" class="brand"><span class="dot">◆</span>AURELINE<small style="margin-left:6px;">HOTEL &amp; RESIDENCES</small></a>
+      <a href="index.html" class="brand"><span class="dot">◆</span>AURELINE<small style="margin-left:6px;">HOTEL &amp; RESIDENCES</small></a>
       <ul class="nav-links">
         <li><a href="index.html">ห้องพัก</a></li>
         <li><a href="booking.html" class="active">จองห้องพัก</a></li>
@@ -23,18 +24,14 @@
 
   <main class="section-tight">
     <div class="wrap" style="max-width:720px;">
-      <span class="eyebrow">แบบฟอร์มการจอง</span>
+      <span class="eyebrow" style="color:var(--primary);">แบบฟอร์มการจอง</span>
       <h2 style="margin:6px 0 32px;">จองห้องพักของคุณ</h2>
-
       <div class="stepper">
         <div class="step active" data-step="1"><div class="step-num">1</div><span class="label">ข้อมูลผู้เข้าพัก</span></div>
         <div class="step" data-step="2"><div class="step-num">2</div><span class="label">เลือกห้อง &amp; วันที่</span></div>
         <div class="step" data-step="3"><div class="step-num">3</div><span class="label">ยืนยันการจอง</span></div>
       </div>
-
       <form id="booking-form" class="panel panel-pad">
-
-        <!-- STEP 1 -->
         <div class="form-step active" id="step-1">
           <div class="form-row">
             <div class="field"><label>ชื่อ</label><input name="first_name" required></div>
@@ -46,28 +43,24 @@
           </div>
           <div class="flex justify-between" style="margin-top:8px;">
             <span></span>
-            <button type="button" class="btn btn-primary" onclick="if(validateStep1()) goToStep(2); else toast('กรุณากรอกข้อมูลผู้เข้าพักให้ครบ','error')">ถัดไป →</button>
+            <button type="button" class="btn btn-primary" onclick="if(typeof validateStep1 === 'function' ? validateStep1() : true) goToStep(2); else toast('กรุณากรอกข้อมูล','error')">ถัดไป →</button>
           </div>
         </div>
-
-        <!-- STEP 2 -->
         <div class="form-step" id="step-2">
           <div class="field"><label>เลือกห้องพัก</label>
-            <select name="room_id" id="select-room" required onchange="onRoomOrDateChange()"></select>
+            <select name="room_id" id="select-room" required onchange="if(typeof onRoomOrDateChange === 'function') onRoomOrDateChange()"></select>
           </div>
           <div class="form-row">
-            <div class="field"><label>วันที่เช็คอิน</label><input type="date" name="check_in" required onchange="onRoomOrDateChange()"></div>
-            <div class="field"><label>วันที่เช็คเอาท์</label><input type="date" name="check_out" required onchange="onRoomOrDateChange()"></div>
+            <div class="field"><label>วันที่เช็คอิน</label><input type="date" name="check_in" required onchange="if(typeof onRoomOrDateChange === 'function') onRoomOrDateChange()"></div>
+            <div class="field"><label>วันที่เช็คเอาท์</label><input type="date" name="check_out" required onchange="if(typeof onRoomOrDateChange === 'function') onRoomOrDateChange()"></div>
           </div>
           <div class="field"><label>จำนวนผู้เข้าพัก</label><input type="number" name="guest_count" min="1" value="1" required></div>
           <p class="muted" id="price-preview" style="font-size:.85rem;"></p>
           <div class="flex justify-between" style="margin-top:8px;">
             <button type="button" class="btn btn-ghost" onclick="goToStep(1)">← ย้อนกลับ</button>
-            <button type="button" class="btn btn-primary" onclick="validateStep2()">ถัดไป →</button>
+            <button type="button" class="btn btn-primary" onclick="if(typeof validateStep2 === 'function') validateStep2()">ถัดไป →</button>
           </div>
         </div>
-
-        <!-- STEP 3 -->
         <div class="form-step" id="step-3">
           <div class="booking-summary" id="booking-summary"></div>
           <div class="flex justify-between" style="margin-top:24px;">
@@ -75,21 +68,17 @@
             <button type="submit" class="btn btn-primary">ยืนยันการจอง</button>
           </div>
         </div>
-
-        <!-- SUCCESS -->
         <div class="form-step" id="step-success">
           <div class="empty-state">
             <span class="eyebrow">สำเร็จ</span>
-            <h3 style="color:var(--text);">จองห้องพักเรียบร้อยแล้ว</h3>
+            <h3 style="color:var(--text-main);">จองห้องพักเรียบร้อยแล้ว</h3>
             <p class="muted" id="success-detail"></p>
             <a href="index.html" class="btn btn-primary" style="margin-top:16px;">กลับหน้าห้องพัก</a>
           </div>
         </div>
-
       </form>
     </div>
   </main>
-
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabaseClient.js"></script>
   <script src="booking.js"></script>
