@@ -1,9 +1,32 @@
-let state = { roomTypes: [], rooms: [], customers: [], bookings: [] };
+// ==========================================
+// 1. ตัวแปร State เก็บข้อมูล
+// ==========================================
+let state = { 
+  roomTypes: [], 
+  rooms: [], 
+  customers: [], 
+  bookings: [] 
+};
 
-document.addEventListener('DOMContentLoaded', () => { initNavigation(); refreshAllData(); });
+// ==========================================
+// 2. โหลดข้อมูลเมื่อเปิดหน้าเว็บ
+// ==========================================
+document.addEventListener('DOMContentLoaded', () => { 
+  initNavigation(); 
+  refreshAllData(); 
+});
 
-function refreshAllData() { loadDashboardStats(); loadRoomTypes(); loadRooms(); loadCustomers(); loadBookings(); }
+function refreshAllData() { 
+  loadDashboardStats(); 
+  loadRoomTypes(); 
+  loadRooms(); 
+  loadCustomers(); 
+  loadBookings(); 
+}
 
+// ==========================================
+// 3. ระบบเมนูนำทาง (Navigation)
+// ==========================================
 function initNavigation() {
   const navButtons = document.querySelectorAll('.admin-nav button');
   navButtons.forEach(btn => {
@@ -25,7 +48,9 @@ function formatDate(dateStr) {
   return parts.length === 3 ? `${parts[2]}/${parts[1]}/${parts[0]}` : dateStr;
 }
 
-// โหลดข้อมูล Dashboard
+// ==========================================
+// 4. ฟังก์ชันโหลดข้อมูลตารางต่างๆ (Read)
+// ==========================================
 async function loadDashboardStats() {
   try {
     const { count: available } = await supabase.from('rooms').select('*', { count: 'exact', head: true }).eq('room_status', 'available');
@@ -39,17 +64,15 @@ async function loadDashboardStats() {
   } catch (err) {}
 }
 
-// โหลดประเภทห้อง
 async function loadRoomTypes() {
   const { data } = await supabase.from('room_types').select('*').order('room_type_id');
   state.roomTypes = data || [];
   const tbody = document.getElementById('tbl-room-types'); if(!tbody) return; tbody.innerHTML = '';
   state.roomTypes.forEach(type => {
-    tbody.innerHTML += `<tr><td class="mono">${type.room_type_id}</td><td><strong>${type.room_type_name}</strong></td><td>${type.description || '-'}</td><td>${type.max_guest} ท่าน</td><td>${type.facilities || '-'}</td><td><button class="btn btn-ghost btn-sm" onclick="openRoomTypeModal(${type.room_type_id})">แก้ไข</button></td></tr>`;
+    tbody.innerHTML += `<tr><td class="mono">${type.room_type_id}</td><td><strong>${type.room_type_name}</strong></td><td>${type.description || '-'}</td><td>${type.max_guest} ท่าน</td><td>${type.facilities || '-'}</td><td><button class="btn btn-ghost btn-sm" onclick="openRoomTypeModal(${type.room_type_id})">แก้ไข</button> <button class="btn btn-ghost btn-sm" style="color:red;" onclick="deleteData('room_types', 'room_type_id', ${type.room_type_id})">ลบ</button></td></tr>`;
   });
 }
 
-// โหลดห้องพัก
 async function loadRooms() {
   const { data } = await supabase.from('rooms').select('*, room_types(*)').order('room_number');
   state.rooms = data || [];
@@ -57,11 +80,10 @@ async function loadRooms() {
   state.rooms.forEach(room => {
     const typeName = room.room_types ? room.room_types.room_type_name : '-';
     const isAvail = room.room_status === 'available';
-    tbody.innerHTML += `<tr><td class="mono">${room.room_id}</td><td><strong style="color:var(--primary); font-size:1.1rem;">${room.room_number}</strong></td><td>${typeName}</td><td>${room.floor || '-'}</td><td>฿${Number(room.price_per_night).toLocaleString()}</td><td><span style="color: ${isAvail ? 'var(--primary)' : 'red'};">${isAvail ? 'ว่าง' : 'ไม่ว่าง'}</span></td><td><button class="btn btn-ghost btn-sm" onclick="openRoomModal(${room.room_id})">แก้ไข</button></td></tr>`;
+    tbody.innerHTML += `<tr><td class="mono">${room.room_id}</td><td><strong style="color:var(--primary); font-size:1.1rem;">${room.room_number}</strong></td><td>${typeName}</td><td>${room.floor || '-'}</td><td>฿${Number(room.price_per_night).toLocaleString()}</td><td><span style="color: ${isAvail ? 'var(--primary)' : 'red'};">${isAvail ? 'ว่าง' : 'ไม่ว่าง'}</span></td><td><button class="btn btn-ghost btn-sm" onclick="openRoomModal(${room.room_id})">แก้ไข</button> <button class="btn btn-ghost btn-sm" style="color:red;" onclick="deleteData('rooms', 'room_id', ${room.room_id})">ลบ</button></td></tr>`;
   });
 }
 
-// โหลดลูกค้า
 async function loadCustomers() {
   const { data } = await supabase.from('customers').select('*, bookings(booking_details(rooms(room_number)))').order('customer_id', { ascending: false });
   state.customers = data || [];
@@ -74,11 +96,10 @@ async function loadCustomers() {
       if(rooms.length > 0) bookedRooms = [...new Set(rooms)].join(', ');
     }
     const regDate = c.register_date ? formatDate(c.register_date) : '-';
-    tbody.innerHTML += `<tr><td class="mono">${c.customer_id}</td><td><strong>${c.first_name || ''} ${c.last_name || ''}</strong></td><td>${c.phone || '-'}</td><td>${c.email || '-'}</td><td><span class="eyebrow" style="color:var(--primary);">${bookedRooms}</span></td><td>${regDate}</td><td><button class="btn btn-primary btn-sm" onclick="viewCustomerDetails(${c.customer_id})">รายละเอียด</button> <button class="btn btn-ghost btn-sm" style="color:red;" onclick="deleteData('customers', 'customer_id', ${c.customer_id})">ลบ</button></td></tr>`;
+    tbody.innerHTML += `<tr><td class="mono">${c.customer_id}</td><td><strong>${c.first_name || ''} ${c.last_name || ''}</strong></td><td>${c.phone || '-'}</td><td>${c.email || '-'}</td><td><span class="eyebrow" style="color:var(--primary); font-size:0.95rem;">${bookedRooms}</span></td><td>${regDate}</td><td><button class="btn btn-primary btn-sm" onclick="viewCustomerDetails(${c.customer_id})">รายละเอียด</button> <button class="btn btn-ghost btn-sm" style="color:red;" onclick="deleteData('customers', 'customer_id', ${c.customer_id})">ลบ</button></td></tr>`;
   });
 }
 
-// โหลดการจอง
 async function loadBookings() {
   const { data } = await supabase.from('bookings').select('*, customers(*), booking_details(rooms(room_number))').order('booking_id', { ascending: false });
   state.bookings = data || [];
@@ -91,7 +112,9 @@ async function loadBookings() {
   });
 }
 
-// รายละเอียดการจอง
+// ==========================================
+// 5. หน้ารายละเอียด (JOIN Views)
+// ==========================================
 window.viewBookingDetails = async function(bookingId) {
   try {
     const { data: booking, error } = await supabase.from('bookings').select('*, customers(*), booking_details(rooms(room_number, price_per_night, room_type_id))').eq('booking_id', bookingId).single();
@@ -121,11 +144,11 @@ window.viewBookingDetails = async function(bookingId) {
     document.getElementById('join-r-price').textContent = `${Number(rPrice).toLocaleString()} บาท/คืน`;
     document.getElementById('join-b-in').textContent = formatDate(booking.check_in); document.getElementById('join-b-out').textContent = formatDate(booking.check_out);
     document.getElementById('join-b-status').textContent = bStatus;
+    
     showView('booking-details');
   } catch (err) { alert('ไม่สามารถดึงข้อมูลรายละเอียดได้'); }
 }
 
-// รายละเอียดลูกค้า
 window.viewCustomerDetails = async function(customerId) {
   try {
     const { data: customer, error } = await supabase.from('customers').select('*, bookings(*, booking_details(rooms(room_number, price_per_night)))').eq('customer_id', customerId).single();
@@ -156,27 +179,139 @@ window.viewCustomerDetails = async function(customerId) {
   } catch (err) { alert('ไม่สามารถดึงข้อมูลรายละเอียดลูกค้าได้'); }
 }
 
-// ฟังก์ชัน CRUD และ Modal
+// ==========================================
+// 6. ระบบ Modal และเพิ่ม/แก้ไข/ลบข้อมูล (CRUD)
+// ==========================================
 function openModal(title, html) { document.getElementById('modal-title').textContent = title; document.getElementById('modal-body').innerHTML = html; document.getElementById('modal-backdrop').classList.add('active'); }
 function closeModal() { document.getElementById('modal-backdrop').classList.remove('active'); }
 
+window.deleteData = async function(table, idColumn, idValue) { 
+  if(!confirm('แน่ใจหรือไม่ที่จะลบข้อมูลนี้? (หากมีการเชื่อมโยงข้อมูลอยู่จะไม่สามารถลบได้)')) return; 
+  try { 
+    const {error} = await supabase.from(table).delete().eq(idColumn, idValue); 
+    if(error) throw error; 
+    refreshAllData(); 
+  } catch(err) { alert('ข้อมูลถูกผูกใช้งานอยู่ (ติด Foreign Key Constraint) ไม่สามารถลบได้ครับ'); } 
+}
+
+// ------ ประเภทห้อง ------
 window.openRoomTypeModal = function(id = null) {
   const item = state.roomTypes.find(x => x.room_type_id == id) || {};
   openModal(id ? 'แก้ไขประเภทห้อง' : 'เพิ่มประเภทห้องใหม่', `<form onsubmit="saveRoomType(event, ${id})"><div class="field"><label>ชื่อประเภทห้อง</label><input type="text" id="rt_name" required value="${item.room_type_name || ''}"></div><div class="field"><label>รายละเอียด</label><input type="text" id="rt_desc" value="${item.description || ''}"></div><div class="form-row"><div class="field"><label>ผู้เข้าพักสูงสุด</label><input type="number" id="rt_max" required value="${item.max_guest || 2}"></div><div class="field"><label>สิ่งอำนวยความสะดวก</label><input type="text" id="rt_fac" value="${item.facilities || ''}"></div></div><button type="submit" class="btn btn-primary btn-block" style="margin-top:16px;">บันทึกข้อมูล</button></form>`);
 }
-window.saveRoomType = async function(e, id) { e.preventDefault(); try { const d = {room_type_name: document.getElementById('rt_name').value, description: document.getElementById('rt_desc').value, max_guest: document.getElementById('rt_max').value, facilities: document.getElementById('rt_fac').value}; if(id) await supabase.from('room_types').update(d).eq('room_type_id', id); else await supabase.from('room_types').insert([d]); closeModal(); loadRoomTypes(); } catch(err) {alert(err.message);} }
+window.saveRoomType = async function(e, id) { 
+  e.preventDefault(); 
+  try { 
+    const d = {room_type_name: document.getElementById('rt_name').value, description: document.getElementById('rt_desc').value, max_guest: document.getElementById('rt_max').value, facilities: document.getElementById('rt_fac').value}; 
+    if(id) await supabase.from('room_types').update(d).eq('room_type_id', id); else await supabase.from('room_types').insert([d]); 
+    closeModal(); loadRoomTypes(); 
+  } catch(err) {alert(err.message);} 
+}
 
+// ------ ห้องพัก ------
 window.openRoomModal = function(id = null) {
   const item = state.rooms.find(x => x.room_id == id) || {};
   openModal(id ? 'แก้ไขห้องพัก' : 'เพิ่มห้องพักใหม่', `<form onsubmit="saveRoom(event, ${id})"><div class="form-row"><div class="field"><label>เลขห้อง</label><input type="text" id="r_no" required value="${item.room_number || ''}"></div><div class="field"><label>ประเภท</label><select id="r_type">${state.roomTypes.map(t => `<option value="${t.room_type_id}" ${item.room_type_id == t.room_type_id ? 'selected' : ''}>${t.room_type_name}</option>`).join('')}</select></div></div><div class="form-row"><div class="field"><label>ชั้น</label><input type="number" id="r_floor" value="${item.floor || 1}"></div><div class="field"><label>ราคาต่อคืน</label><input type="number" id="r_price" required value="${item.price_per_night || 0}"></div></div><div class="field"><label>สถานะ</label><select id="r_status"><option value="available" ${item.room_status == 'available' ? 'selected' : ''}>ว่าง</option><option value="occupied" ${item.room_status == 'occupied' ? 'selected' : ''}>ไม่ว่าง</option></select></div><button type="submit" class="btn btn-primary btn-block" style="margin-top:16px;">บันทึกข้อมูล</button></form>`);
 }
-window.saveRoom = async function(e, id) { e.preventDefault(); try { const d = {room_number: document.getElementById('r_no').value, room_type_id: document.getElementById('r_type').value, floor: document.getElementById('r_floor').value, price_per_night: document.getElementById('r_price').value, room_status: document.getElementById('r_status').value}; if(id) await supabase.from('rooms').update(d).eq('room_id', id); else await supabase.from('rooms').insert([d]); closeModal(); loadRooms(); loadDashboardStats();} catch(err) {alert(err.message);} }
+window.saveRoom = async function(e, id) { 
+  e.preventDefault(); 
+  try { 
+    const d = {room_number: document.getElementById('r_no').value, room_type_id: document.getElementById('r_type').value, floor: document.getElementById('r_floor').value, price_per_night: document.getElementById('r_price').value, room_status: document.getElementById('r_status').value}; 
+    if(id) await supabase.from('rooms').update(d).eq('room_id', id); else await supabase.from('rooms').insert([d]); 
+    closeModal(); loadRooms(); loadDashboardStats();
+  } catch(err) {alert(err.message);} 
+}
 
+// ------ ลูกค้า ------
 window.openCustomerModal = function(id = null) {
   const item = state.customers.find(x => x.customer_id == id) || {};
   openModal(id ? 'แก้ไขข้อมูลลูกค้า' : 'เพิ่มลูกค้าใหม่', `<form onsubmit="saveCustomer(event, ${id})"><div class="form-row"><div class="field"><label>ชื่อ</label><input type="text" id="c_fname" required value="${item.first_name || ''}"></div><div class="field"><label>นามสกุล</label><input type="text" id="c_lname" required value="${item.last_name || ''}"></div></div><div class="form-row"><div class="field"><label>เบอร์โทรศัพท์</label><input type="text" id="c_phone" value="${item.phone || ''}"></div><div class="field"><label>อีเมล</label><input type="email" id="c_email" value="${item.email || ''}"></div></div><button type="submit" class="btn btn-primary btn-block" style="margin-top:16px;">บันทึกข้อมูล</button></form>`);
 }
-window.saveCustomer = async function(e, id) { e.preventDefault(); try { const d = {first_name: document.getElementById('c_fname').value, last_name: document.getElementById('c_lname').value, phone: document.getElementById('c_phone').value, email: document.getElementById('c_email').value}; if(id) { await supabase.from('customers').update(d).eq('customer_id', id); } else { d.register_date = new Date().toISOString().split('T')[0]; await supabase.from('customers').insert([d]); } closeModal(); loadCustomers(); loadDashboardStats(); if(id) viewCustomerDetails(id); } catch(err) {alert(err.message);} }
+window.saveCustomer = async function(e, id) { 
+  e.preventDefault(); 
+  try { 
+    const d = {first_name: document.getElementById('c_fname').value, last_name: document.getElementById('c_lname').value, phone: document.getElementById('c_phone').value, email: document.getElementById('c_email').value}; 
+    if(id) { await supabase.from('customers').update(d).eq('customer_id', id); } else { d.register_date = new Date().toISOString().split('T')[0]; await supabase.from('customers').insert([d]); } 
+    closeModal(); loadCustomers(); loadDashboardStats(); if(id) viewCustomerDetails(id); 
+  } catch(err) {alert(err.message);} 
+}
 
-window.openBookingModal = function() { openModal('แจ้งเตือน', '<p class="muted" style="text-align:center; padding: 20px;">กรุณาทำรายการจองผ่านหน้าเว็บหลัก เพื่อความถูกต้องของการตัดสต๊อกห้อง</p>'); }
-window.deleteData = async function(table, idColumn, idValue) { if(!confirm('แน่ใจหรือไม่ที่จะลบข้อมูลนี้?')) return; try { const {error} = await supabase.from(table).delete().eq(idColumn, idValue); if(error) throw error; refreshAllData(); } catch(err) { alert('ข้อมูลถูกผูกใช้งานอยู่ (ติด Foreign Key)'); } }
+// ------ การจอง (เพิ่มข้อมูล) แบบกรอกชื่อลูกค้าใหม่ ------
+window.openBookingModal = function() {
+  const availableRooms = state.rooms.filter(r => r.room_status === 'available');
+  let roomOptions = availableRooms.map(r => {
+    const tName = r.room_types ? r.room_types.room_type_name : '';
+    return `<option value="${r.room_id}" data-price="${r.price_per_night}">ห้อง ${r.room_number} - ${tName} (฿${Number(r.price_per_night).toLocaleString()}/คืน)</option>`;
+  }).join('');
+  if (availableRooms.length === 0) roomOptions = '<option value="">-- ไม่มีห้องว่าง --</option>';
+
+  const todayStr = new Date().toISOString().split('T')[0];
+  const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate() + 1);
+  const tomorrowStr = tomorrow.toISOString().split('T')[0];
+
+  const html = `
+    <form onsubmit="saveBookingAdmin(event)">
+      <div class="form-row">
+        <div class="field"><label>ชื่อลูกค้า</label><input type="text" id="b_fname" placeholder="ชื่อจริง" required></div>
+        <div class="field"><label>นามสกุล</label><input type="text" id="b_lname" placeholder="นามสกุล" required></div>
+      </div>
+      <div class="field"><label>เบอร์โทรศัพท์ติดต่อ</label><input type="tel" id="b_phone" placeholder="08X-XXX-XXXX" required></div>
+      <div class="field"><label>เลือกห้องพัก</label><select id="b_room" required ${availableRooms.length === 0 ? 'disabled' : ''}>${roomOptions}</select></div>
+      <div class="form-row">
+        <div class="field"><label>วันที่เช็คอิน</label><input type="date" id="b_checkin" required value="${todayStr}"></div>
+        <div class="field"><label>วันที่เช็คเอาท์</label><input type="date" id="b_checkout" required value="${tomorrowStr}"></div>
+      </div>
+      <div class="form-row">
+        <div class="field"><label>จำนวนผู้เข้าพัก</label><input type="number" id="b_guests" required min="1" value="2"></div>
+        <div class="field"><label>สถานะ</label><select id="b_status"><option value="confirmed">ยืนยันแล้ว</option><option value="pending">รอยืนยัน</option></select></div>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block" style="margin-top:16px;" ${availableRooms.length === 0 ? 'disabled' : ''}>บันทึกการจองห้องพัก</button>
+    </form>`;
+  openModal('เพิ่มรายการจองใหม่', html);
+}
+
+window.saveBookingAdmin = async function(e) {
+  e.preventDefault();
+  
+  const fname = document.getElementById('b_fname').value;
+  const lname = document.getElementById('b_lname').value;
+  const phone = document.getElementById('b_phone').value;
+  const roomId = document.getElementById('b_room').value;
+  const checkIn = document.getElementById('b_checkin').value;
+  const checkOut = document.getElementById('b_checkout').value;
+  const guests = document.getElementById('b_guests').value;
+  const status = document.getElementById('b_status').value;
+  if (!roomId) return alert('กรุณาเลือกห้องพัก');
+
+  try {
+    const roomSelect = document.getElementById('b_room');
+    const pricePerNight = roomSelect.options[roomSelect.selectedIndex].getAttribute('data-price');
+    const diffDays = Math.ceil(Math.abs(new Date(checkOut) - new Date(checkIn)) / (1000 * 60 * 60 * 24)) || 1;
+    const todayStr = new Date().toISOString().split('T')[0];
+
+    // 1. บันทึกข้อมูลลูกค้าใหม่
+    const { data: custData, error: custError } = await supabase.from('customers').insert([{
+      first_name: fname, last_name: lname, phone: phone, register_date: todayStr
+    }]).select();
+    if (custError) throw custError;
+    const customerId = custData[0].customer_id || custData[0].id;
+
+    // 2. บันทึกตาราง bookings
+    const { data: bData, error: bError } = await supabase.from('bookings').insert([{
+      customer_id: customerId, booking_date: todayStr, check_in: checkIn, check_out: checkOut, guest_count: guests, booking_status: status
+    }]).select();
+    if (bError) throw bError;
+    const newBookingId = bData[0].booking_id || bData[0].id;
+
+    // 3. บันทึกตาราง booking_details
+    const { error: bdError } = await supabase.from('booking_details').insert([{
+      booking_id: newBookingId, room_id: roomId, price_per_night: pricePerNight, total_nights: diffDays, total_price: pricePerNight * diffDays
+    }]);
+    if (bdError) throw bdError;
+
+    // 4. เปลี่ยนสถานะห้องพัก
+    if (status === 'confirmed') await supabase.from('rooms').update({ room_status: 'occupied' }).eq('room_id', roomId);
+
+    closeModal(); refreshAllData();
+  } catch (err) { alert('เกิดข้อผิดพลาด: ' + err.message); }
+}
